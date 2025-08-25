@@ -5,6 +5,9 @@ import {
   getAllEventsAdmin,
   getEventById,
   getUpcomingEvents,
+  getOrganizerEvents,
+  updateEvent,
+  deleteEvent,
 } from "../controllers/eventController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { roleMiddleware } from "../middleware/roleMiddleware.js";
@@ -26,6 +29,33 @@ router.get("/admin", authMiddleware, roleMiddleware(["admin", "organizer"]), get
 
 router.get("/upcoming", getUpcomingEvents);
 
+// Organizer-specific routes
+router.get("/organizer/my-events", authMiddleware, roleMiddleware(["organizer"]), getOrganizerEvents);
+
+router.put(
+  "/:id",
+  authMiddleware,
+  roleMiddleware(["organizer", "admin"]),
+  uploadEventMedia,
+  updateEvent
+);
+
+router.delete(
+  "/:id",
+  authMiddleware,
+  roleMiddleware(["organizer", "admin"]),
+  deleteEvent
+);
+
 router.get("/:id", getEventById);
+
+router.patch(
+  "/edit/:id",
+  authMiddleware,
+  roleMiddleware(["organizer", "admin"]),
+  uploadEventMedia,
+  updateEvent
+);
+
 
 export default router;

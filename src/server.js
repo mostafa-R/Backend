@@ -15,10 +15,10 @@ import userRoutes from "./routes/userRoutes.js";
 // دول ضفتهم عشان التذاكر والايفنت
 import { authMiddleware } from "./middleware/authMiddleware.js";
 import bookingRoutes from "./routes/booking.routes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import ticketRoutes from "./routes/ticketRoutes.js";
 import "./utils/archiveOldUsers.js";
-import chatRoutes from "./routes/chatRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -31,14 +31,15 @@ app.get("/", (req, res) => {
 app.use(cookieParser());
 
 // لازم express.json ييجي هنا قبل أي routes
-app.use(express.json()); 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // لو هتستخدم form-data
 
 // Update: Explicitly set allowed origin for frontend and credentials for cookies
 app.use(
   cors({
-    origin: "http://localhost:5173", // Updated to match your frontend port
+    origin: ["http://localhost:4200", "http://localhost:54289"], // Updated to match your frontend port
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -65,7 +66,6 @@ app.use(
   express.raw({ type: "application/json" })
 );
 
-
 // هنا خلي الروتز بعد ما JSON Parser يتفعل
 app.use("/api", chatRoutes);
 
@@ -81,12 +81,11 @@ app.use("/api/booking", bookingRoutes);
 
 app.use(errorMiddleware);
 
-
 export const Bootstrap = async () => {
   try {
     await connectDB();
 
-    app.listen(process.env.PORT, () => {
+    app.listen(process.env.PORT || 5000, "0.0.0.0", () => {
       console.log(`Server is running on port ${process.env.PORT}`);
     });
   } catch (error) {

@@ -1,7 +1,6 @@
 // controllers/checkout.controller.js
 import axios from "axios";
-import crypto from "crypto";
-import { randomUUID } from "crypto";
+import crypto, { randomUUID } from "crypto";
 
 const isSandbox = (process.env.CKO_ENV || "sandbox") === "sandbox";
 const BASE_URL = isSandbox
@@ -56,6 +55,7 @@ export const payWithToken = async (req, res) => {
       failure_url,
       customer: customer || undefined, // {email,name,phone}
       metadata,
+      processing_channel_id: "pc_e47vukgralqelp6yq6qmujalwe", // pc_xxx
     };
 
     const { data } = await cko.post("/payments", body, {
